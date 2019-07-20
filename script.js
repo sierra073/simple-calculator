@@ -2,18 +2,20 @@
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
-const divide = (a, b) => b != 0 ? a / b : 'Inf; AC plz';
+const divide = (a, b) => b != 0 ? a / b : 'Inf >:(';
 const power = (a, b) => Math.pow(a, b);
 
 const result = document.querySelector('#result');
 const nums = document.querySelectorAll(".btn-num");
 const operators = document.querySelectorAll(".btn-operator");
 const misc = document.querySelectorAll(".btn-top");
+const dot = document.querySelectorAll("#dot")[0];
 
 let firstOperand = '';
 let secondOperand = '';
 let currOperator = '';
 let operated = false;
+let dotted = false;
 
 result.textContent = '0';
 
@@ -31,7 +33,7 @@ const checkResize = () => {
 
 function displayNum(num) {
   if (result.textContent==='0' && num != '0') {
-    result.textContent = Number(num);
+    (num.includes('.') && !operated) ?  result.textContent += num : result.textContent = Number(num);
   } else {
   	if (num.length < 10 || Number.isInteger(Number(num))) {
   		result.textContent = Number(num);
@@ -44,15 +46,21 @@ function displayNum(num) {
 }
 
 function numButtonHandler(num) {
-  console.log(num);
-  if (num == '.' && operated && !secondOperand) {
-    num = '0' + num;
+  if (num === '.') {
+    dotted = true;
+    if ((operated && !secondOperand)) {
+      num = '0' + num;
+    } else {
+      if (result.textContent.includes('.')) {
+        return;
+      }
+    }
   }
   if (!operated) {
     firstOperand += num;
     displayNum(firstOperand);
   } else if (currOperator == '') {
-    firstOperand = num;
+    (result.textContent == '0' && dotted) ? firstOperand = result.textContent + '.' + num : firstOperand = num;
     displayNum(firstOperand);
   } else {
     secondOperand += num;
@@ -77,7 +85,8 @@ function operate(op, a, b) {
 function calculateDisplayReset() {
   firstOperand = '' + operate(currOperator, Number(firstOperand), Number(secondOperand));
   if (firstOperand == divide(1,0)) {
-    result.textContent = firstOperand; // To-do: fix/make behave like AC
+    result.textContent = firstOperand;
+    clear();
   } else {
     displayNum(firstOperand);
     secondOperand = '';
@@ -93,7 +102,7 @@ function opButtonHandler(op) {
    currOperator = op;
   } else {
     if (secondOperand) {
-      calculateDisplayReset()
+      calculateDisplayReset();
     } else {
       firstOperand = result.textContent;
     }
@@ -114,6 +123,7 @@ function clear() {
   secondOperand = '';
   currOperator = '';
   operated = false;
+  dotted = false;
 }
 
 function miscButtonHandler(op) {
