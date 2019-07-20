@@ -70,15 +70,13 @@ function operate(op, a, b) {
 // 14 + 5 = 19 + 2 - (17 -- should be 21)
 function opButtonHandler(op) {
   operated = true;
-  console.log(firstOperand);
-  console.log(secondOperand);
   if (op != '=') {
-    currOperator = op;
     if (secondOperand) {
       firstOperand = '' + operate(currOperator, Number(firstOperand), Number(secondOperand));
-      displayNum(firstOperand)
-      secondOperand = ''
+      displayNum(firstOperand);
+      secondOperand = '';
     }
+   currOperator = op;
   } else {
     if (secondOperand) {
       firstOperand = '' + operate(currOperator, Number(firstOperand), Number(secondOperand));
@@ -87,7 +85,7 @@ function opButtonHandler(op) {
     } else {
       firstOperand = result.textContent;
     }
-    currOperator = '';
+   currOperator = '';
   }
 }
 
