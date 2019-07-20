@@ -44,6 +44,10 @@ function displayNum(num) {
 }
 
 function numButtonHandler(num) {
+  console.log(num);
+  if (num == '.' && operated && !secondOperand) {
+    num = '0' + num;
+  }
   if (!operated) {
     firstOperand += num;
     displayNum(firstOperand);
@@ -54,6 +58,7 @@ function numButtonHandler(num) {
     secondOperand += num;
     displayNum(secondOperand);
   }
+  // To do: fix 12.3 - 5 = 7.300000000000001 issue
 }
 
 function operate(op, a, b) {
