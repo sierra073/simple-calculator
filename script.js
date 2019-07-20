@@ -2,7 +2,7 @@
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
-const divide = (a, b) => a / b;
+const divide = (a, b) => b != 0 ? a / b : 'Inf; AC plz';
 const power = (a, b) => Math.pow(a, b);
 
 const result = document.querySelector('#result');
@@ -47,6 +47,9 @@ function numButtonHandler(num) {
   if (!operated) {
     firstOperand += num;
     displayNum(firstOperand);
+  } else if (currOperator == '') {
+    firstOperand = num;
+    displayNum(firstOperand);
   } else {
     secondOperand += num;
     displayNum(secondOperand);
@@ -65,23 +68,27 @@ function operate(op, a, b) {
       return divide(a, b);
   }
 }
-// 14 + 5 - (9 -- should be 19)
-// 12 - 3 + (15 -- should be 9)
-// 14 + 5 = 19 + 2 - (17 -- should be 21)
+
+function calculateDisplayReset() {
+  firstOperand = '' + operate(currOperator, Number(firstOperand), Number(secondOperand));
+  if (firstOperand == divide(1,0)) {
+    result.textContent = firstOperand; // To-do: fix/make behave like AC
+  } else {
+    displayNum(firstOperand);
+    secondOperand = '';
+  }
+}
+
 function opButtonHandler(op) {
   operated = true;
   if (op != '=') {
     if (secondOperand) {
-      firstOperand = '' + operate(currOperator, Number(firstOperand), Number(secondOperand));
-      displayNum(firstOperand);
-      secondOperand = '';
+      calculateDisplayReset()
     }
    currOperator = op;
   } else {
     if (secondOperand) {
-      firstOperand = '' + operate(currOperator, Number(firstOperand), Number(secondOperand));
-      displayNum(firstOperand);
-      secondOperand = ''; // repetitive
+      calculateDisplayReset()
     } else {
       firstOperand = result.textContent;
     }
@@ -89,14 +96,47 @@ function opButtonHandler(op) {
   }
 }
 
+function backspace(str) {
+  if (str.length == 1 || str == '0') {
+    return '0';
+  } else {
+    return str.slice(0, -1);
+  }
+}
+
+function clear() {
+  firstOperand = '';
+  secondOperand = '';
+  currOperator = '';
+  operated = false;
+}
+
 function miscButtonHandler(op) {
   switch (op) {
     case 'AC': {
       displayNum('0');
-      firstOperand = '';
-      secondOperand = '';
-      currOperator = '';
-      operated = false;
+      clear();
+      break;
+    }
+    case '←': {
+      if (!operated) {
+        firstOperand = backspace(firstOperand);
+        displayNum(firstOperand);
+      } else {
+        secondOperand = backspace(secondOperand);
+        displayNum(secondOperand);
+      }
+      break;
+    }
+    case '+/-': {
+      let currNum = Number(result.textContent);
+      currNum = multiply(-1, currNum);
+      if (secondOperand) {
+        secondOperand = currNum;
+      } else {
+        firstOperand = currNum;
+      }
+      displayNum(currNum);
       break;
     }
   }
